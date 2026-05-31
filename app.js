@@ -18,6 +18,7 @@
     levelIndex: 0,
     turn: 0, // 0 -> names[0] answers, 1 -> names[1]
     answeredCount: 0, // counted questions shown this game (drives turn alternation)
+    blended: false, // true once earlier layers are folded into the deepest pool
     drawnInLevel: 0,
     totalDrawn: 0,
     sinceWildcard: 0,
@@ -155,8 +156,8 @@
   // ---- level UI ----
   function renderLevelMeta() {
     const lvl = currentLevel();
-    el.levelName.textContent = lvl.name;
-    el.levelTagline.textContent = lvl.tagline;
+    el.levelName.textContent = state.blended ? "All Layers" : lvl.name;
+    el.levelTagline.textContent = state.blended ? "Everything in the mix" : lvl.tagline;
     el.dots.forEach((dot, i) => {
       dot.classList.toggle("current", i === state.levelIndex);
       dot.classList.toggle("done", i < state.levelIndex);
@@ -166,10 +167,14 @@
   function updateDeepenBtn() {
     const atLast = state.levelIndex >= LEVEL_ORDER.length - 1;
     const ready = state.drawnInLevel >= CARDS_TO_UNLOCK;
-    el.deepenBtn.disabled = atLast || !ready;
-    el.deepenBtn.style.display = atLast ? "none" : "";
-    el.deepenBtn.classList.toggle("is-ready", ready && !atLast);
-    el.deepenBtn.textContent = ready && !atLast ? "Ready — go deeper →" : "Go deeper →";
+    el.deepenBtn.disabled = !ready;
+    el.deepenBtn.classList.toggle("is-ready", ready);
+    if (atLast) {
+      // On the deepest layer the action folds the earlier layers back in.
+      el.deepenBtn.textContent = "Bring it all together ↻";
+    } else {
+      el.deepenBtn.textContent = ready ? "Ready — go deeper →" : "Go deeper →";
+    }
   }
 
   // ---- core draw loop ----
@@ -245,13 +250,35 @@
 
   // ---- level transition ----
   function deepen() {
-    if (state.levelIndex >= LEVEL_ORDER.length - 1) return;
-    state.levelIndex++;
-    state.drawnInLevel = 0;
-    const lvl = currentLevel();
-    el.transitionName.textContent = "Entering: " + lvl.name;
-    el.transitionBlurb.textContent = lvl.blurb;
+    if (state.drawnInLevel < CARDS_TO_UNLOCK) return; // guard; button is disabled anyway
+    if (state.levelIndex < LEVEL_ORDER.length - 1) {
+      // Advance to the next layer.
+      state.levelIndex++;
+      state.drawnInLevel = 0;
+      const lvl = currentLevel();
+      el.transitionName.textContent = "Entering: " + lvl.name;
+      el.transitionBlurb.textContent = lvl.blurb;
+    } else {
+      // Already at the deepest layer: fold the earlier layers back into the pool.
+      mergeEarlierLayers();
+      el.transitionName.textContent = "Bringing it all together";
+      el.transitionBlurb.textContent =
+        "Surface and Subsurface are back in the mix. From here, any layer can surface — answer the whole of each other.";
+    }
     el.transition.classList.add("is-active");
+  }
+
+  // Shuffle the curated (and a few generated) Surface + Subsurface prompts into
+  // the current Core pool, deduped so repeated blends never create repeats.
+  function mergeEarlierLayers() {
+    let extra = [];
+    ["surface", "subsurface"].forEach((id) => {
+      extra = extra.concat(LEVELS[id].cards, generateFromTemplates(id, 3));
+    });
+    const remaining = state.bags.core || [];
+    state.bags.core = shuffle(Array.from(new Set(remaining.concat(extra))));
+    state.drawnInLevel = 0;
+    state.blended = true;
   }
 
   function confirmTransition() {
@@ -325,7 +352,7 @@
       state.totalDrawn +
       (state.totalDrawn === 1 ? " card" : " cards") +
       " and reached the " +
-      currentLevel().name +
+      (state.blended ? "All Layers" : currentLevel().name) +
       " layer.";
 
     el.savedList.innerHTML = "";
@@ -354,6 +381,7 @@
     state.levelIndex = 0;
     state.turn = 0;
     state.answeredCount = 0;
+    state.blended = false;
     state.drawnInLevel = 0;
     state.totalDrawn = 0;
     state.sinceWildcard = 0;
