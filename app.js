@@ -17,6 +17,7 @@
     theme: "dark",
     levelIndex: 0,
     turn: 0, // 0 -> names[0] answers, 1 -> names[1]
+    answeredCount: 0, // counted questions shown this game (drives turn alternation)
     drawnInLevel: 0,
     totalDrawn: 0,
     sinceWildcard: 0,
@@ -43,7 +44,8 @@
     dots: document.querySelectorAll(".dot"),
     card: $("#card"),
     cardText: $("#card-text"),
-    turnIndicator: $("#turn-indicator"),
+    askerIndicator: $("#asker-indicator"),
+    answererIndicator: $("#answerer-indicator"),
 
     drawBtn: $("#draw-btn"),
     skipBtn: $("#skip-btn"),
@@ -166,6 +168,8 @@
     const ready = state.drawnInLevel >= CARDS_TO_UNLOCK;
     el.deepenBtn.disabled = atLast || !ready;
     el.deepenBtn.style.display = atLast ? "none" : "";
+    el.deepenBtn.classList.toggle("is-ready", ready && !atLast);
+    el.deepenBtn.textContent = ready && !atLast ? "Ready — go deeper →" : "Go deeper →";
   }
 
   // ---- core draw loop ----
@@ -198,13 +202,18 @@
     const text = state.bags[lvl.id].pop();
     state.currentText = text;
 
-    // A passed card doesn't count toward unlocking the next level, and it stays
-    // the same person's turn to answer the replacement.
-    el.turnIndicator.textContent = state.names[state.turn] + " answers";
+    // A counted question advances to the next person (but not before the very
+    // first card). A pass doesn't count and stays the same person's turn.
     if (counts) {
+      if (state.answeredCount > 0) {
+        state.turn = state.turn === 0 ? 1 : 0;
+      }
+      state.answeredCount++;
       state.drawnInLevel++;
-      state.turn = state.turn === 0 ? 1 : 0;
     }
+    const asker = state.turn === 0 ? 1 : 0;
+    el.askerIndicator.textContent = state.names[asker] + " asks";
+    el.answererIndicator.textContent = state.names[state.turn] + " answers";
 
     setActionsVisible(true);
     el.cardText.textContent = text;
@@ -344,6 +353,7 @@
     // reset session state
     state.levelIndex = 0;
     state.turn = 0;
+    state.answeredCount = 0;
     state.drawnInLevel = 0;
     state.totalDrawn = 0;
     state.sinceWildcard = 0;
@@ -353,7 +363,8 @@
     state.currentText = "";
 
     el.cardText.textContent = "Take a breath. Tap “Draw” when you're ready.";
-    el.turnIndicator.textContent = "";
+    el.askerIndicator.textContent = "";
+    el.answererIndicator.textContent = "";
     el.drawBtn.textContent = "Draw";
     el.saveBtn.setAttribute("aria-pressed", "false");
     el.saveBtn.textContent = "♡ Keep";

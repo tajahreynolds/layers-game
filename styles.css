@@ -99,6 +99,22 @@ body {
 .btn-link:hover:not(:disabled) { color: var(--accent); }
 .btn-link.subtle { color: var(--ink-faint); }
 
+/* When the next layer unlocks, make the call-to-action unmistakable. */
+.btn-link.is-ready {
+  color: #fff;
+  background: var(--accent);
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-weight: 700;
+  animation: pulse 1.9s var(--ease) infinite;
+}
+.btn-link.is-ready:hover { color: #fff; }
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); }
+  70%  { box-shadow: 0 0 0 12px color-mix(in srgb, var(--accent) 0%, transparent); }
+  100% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent); }
+}
+
 /* ============ SETUP ============ */
 .setup-inner { margin: auto 0; text-align: center; padding: 18px 4px; }
 .logo {
@@ -207,14 +223,22 @@ body {
   0%   { opacity: 0; transform: translateY(18px) scale(0.98); }
   100% { opacity: 1; transform: translateY(0) scale(1); }
 }
-.card-kicker { min-height: 20px; margin-bottom: 18px; }
+.card-kicker {
+  min-height: 20px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
 .turn-indicator {
   font-family: system-ui, sans-serif;
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--accent);
 }
+.turn-indicator.asker { color: var(--ink-faint); }
+.turn-indicator.answerer { color: var(--accent); text-align: right; }
 .card-text {
   font-size: clamp(1.5rem, 6.2vw, 2.05rem);
   line-height: 1.32;
