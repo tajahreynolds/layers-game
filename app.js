@@ -172,8 +172,14 @@
   }
 
   function updateDeepenBtn() {
+    // Once everything's blended there's nothing left to bring together.
+    if (state.blended) {
+      el.deepenBtn.style.display = "none";
+      return;
+    }
     const atLast = state.levelIndex >= LEVEL_ORDER.length - 1;
     const ready = state.drawnInLevel >= CARDS_TO_UNLOCK;
+    el.deepenBtn.style.display = "";
     el.deepenBtn.disabled = !ready;
     el.deepenBtn.classList.toggle("is-ready", ready);
     if (atLast) {
