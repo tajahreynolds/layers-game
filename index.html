@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Layers — a conversation card game for two, designed to deepen connection one layer at a time."
+    />
+    <title>Layers — a game for two</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app">
+      <!-- ============ SETUP SCREEN ============ -->
+      <section id="setup" class="screen is-active">
+        <div class="setup-inner">
+          <h1 class="logo">Layers</h1>
+          <p class="logo-sub">A conversation for two — one layer at a time.</p>
+
+          <div class="names">
+            <label>
+              <span>One of you</span>
+              <input id="name-a" type="text" maxlength="16" placeholder="Name" autocomplete="off" />
+            </label>
+            <label>
+              <span>The other</span>
+              <input id="name-b" type="text" maxlength="16" placeholder="Name" autocomplete="off" />
+            </label>
+          </div>
+
+          <div class="intentions">
+            <p>Before you begin:</p>
+            <ul>
+              <li>Put the phone between you. Take turns reading aloud.</li>
+              <li>Anything can be passed. There's no wrong answer.</li>
+              <li>Stay curious, not right.</li>
+            </ul>
+          </div>
+
+          <button id="begin-btn" class="btn btn-primary">Begin</button>
+        </div>
+      </section>
+
+      <!-- ============ GAME SCREEN ============ -->
+      <section id="game" class="screen">
+        <header class="topbar">
+          <div class="level-meta">
+            <span id="level-name" class="level-name">Surface</span>
+            <span id="level-tagline" class="level-tagline">Perception</span>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <span class="dot" data-level="surface"></span>
+            <span class="dot" data-level="subsurface"></span>
+            <span class="dot" data-level="core"></span>
+          </div>
+        </header>
+
+        <div class="card-stage">
+          <article id="card" class="card">
+            <div class="card-kicker">
+              <span id="turn-indicator" class="turn-indicator"></span>
+            </div>
+            <p id="card-text" class="card-text">Tap “Draw” to begin.</p>
+          </article>
+        </div>
+
+        <div class="controls">
+          <button id="skip-btn" class="btn btn-ghost" title="Pass on this one">Pass</button>
+          <button id="draw-btn" class="btn btn-primary">Draw</button>
+          <button id="save-btn" class="btn btn-ghost" title="Keep this moment" aria-pressed="false">♡ Keep</button>
+        </div>
+
+        <div class="deepen-row">
+          <button id="deepen-btn" class="btn btn-link" disabled>
+            Go deeper →
+          </button>
+          <button id="end-btn" class="btn btn-link subtle">End &amp; reflect</button>
+        </div>
+      </section>
+
+      <!-- ============ LEVEL TRANSITION OVERLAY ============ -->
+      <div id="transition" class="overlay">
+        <div class="overlay-inner">
+          <h2 id="transition-name"></h2>
+          <p id="transition-blurb"></p>
+          <button id="transition-btn" class="btn btn-primary">Continue</button>
+        </div>
+      </div>
+
+      <!-- ============ WILDCARD OVERLAY ============ -->
+      <div id="wildcard" class="overlay">
+        <div class="overlay-inner wildcard-inner">
+          <span class="wildcard-label">Wildcard</span>
+          <h2 id="wildcard-title"></h2>
+          <p id="wildcard-body"></p>
+          <div id="timer-wrap" class="timer-wrap" hidden>
+            <span id="timer-display" class="timer-display">30</span>
+          </div>
+          <div class="overlay-actions">
+            <button id="wildcard-timer-btn" class="btn btn-ghost" hidden>Start timer</button>
+            <button id="wildcard-btn" class="btn btn-primary">Done</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ REFLECTION / END SCREEN ============ -->
+      <section id="reflection" class="screen">
+        <div class="reflection-inner">
+          <h2>The layers you peeled back</h2>
+          <p id="reflection-stat" class="reflection-stat"></p>
+          <ul id="saved-list" class="saved-list"></ul>
+          <div class="closing">
+            <p id="closing-line" class="closing-line"></p>
+          </div>
+          <button id="restart-btn" class="btn btn-primary">Play again</button>
+        </div>
+      </section>
+
+      <!-- ============ FOOTER ============ -->
+      <footer class="footer">
+        <button id="theme-btn" class="icon-btn" title="Toggle light / dark">◑</button>
+        <span class="footer-note">Layers · made for slow conversations</span>
+      </footer>
+    </main>
+
+    <script src="questions.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
