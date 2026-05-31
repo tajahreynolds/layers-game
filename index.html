@@ -2,12 +2,39 @@
 <html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta
       name="description"
-      content="Layers — a conversation card game for two, designed to deepen connection one layer at a time."
+      content="Layers — a conversation card game for two, designed to deepen connection one layer at a time. Private by design: nothing leaves your device."
     />
-    <title>Layers — a game for two</title>
+    <title>Layers — a conversation for two</title>
+
+    <!-- Icons & install -->
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="manifest" href="site.webmanifest" />
+    <meta name="theme-color" content="#14110f" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Layers" />
+
+    <!-- Social preview -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Layers — a conversation for two" />
+    <meta
+      property="og:description"
+      content="Take turns drawing cards that peel back the layers — one honest question at a time. Private by design."
+    />
+    <meta property="og:image" content="https://tajahreynolds.github.io/layers-game/og-image.png" />
+    <meta property="og:url" content="https://tajahreynolds.github.io/layers-game/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Layers — a conversation for two" />
+    <meta
+      name="twitter:description"
+      content="Take turns drawing cards that peel back the layers — one honest question at a time."
+    />
+    <meta name="twitter:image" content="https://tajahreynolds.github.io/layers-game/og-image.png" />
+
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -35,6 +62,7 @@
               <li>Put the phone between you. Take turns reading aloud.</li>
               <li>Anything can be passed. There's no wrong answer.</li>
               <li>Stay curious, not right.</li>
+              <li>Private by design — nothing you say or save ever leaves this device.</li>
             </ul>
           </div>
 
@@ -57,7 +85,7 @@
         </header>
 
         <div class="card-stage">
-          <article id="card" class="card">
+          <article id="card" class="card" role="group" aria-live="polite" aria-atomic="true" aria-label="Current card">
             <div class="card-kicker">
               <span id="asker-indicator" class="turn-indicator asker"></span>
               <span id="answerer-indicator" class="turn-indicator answerer"></span>

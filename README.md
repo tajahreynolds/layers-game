@@ -65,14 +65,29 @@ The brief was treated as a starting point, not a spec. The guiding principle:
 
 ## Project structure
 ```
-index.html     Markup + the four screens (setup, game, reflection) and overlays
-styles.css     Theming (dark default + light), card/overlay styling
-questions.js   All content: curated cards, wildcards, constrained templates
-app.js         Game state, draw loop, level gating, wildcards, persistence
+index.html          Markup + screens (setup, game, reflection), overlays, meta/social tags
+styles.css          Theming (dark/light), card/overlay styling, focus + reduced-motion
+questions.js        All content: curated cards, wildcards, constrained templates
+app.js              Game state, draw loop, level gating, wildcards, persistence
+site.webmanifest    PWA manifest (Add to Home Screen)
+favicon.svg         Scalable favicon (the "layers" mark)
+assets/gen_assets.py  Regenerates the PNG icons + social image
+*.png               Generated icons + og-image.png (social preview)
 ```
 
 Content lives entirely in `questions.js` — add or edit prompts there without
 touching the logic.
+
+### Regenerating brand assets
+The icons and social preview are generated from `assets/gen_assets.py`
+(requires `pip install Pillow`). Re-run after changing the palette or wordmark:
+```bash
+python3 assets/gen_assets.py
+```
+
+> **Note:** the social/OG image URLs in `index.html` are absolute and point at
+> `tajahreynolds.github.io/layers-game/`. If you move to a custom domain, update
+> those `og:image` / `og:url` / `twitter:image` tags to match.
 
 ## Run locally
 No build step. Just open the file:

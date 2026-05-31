@@ -82,6 +82,14 @@ body {
 .btn:active { transform: scale(0.96); }
 .btn:disabled { opacity: 0.35; cursor: default; }
 
+/* Visible keyboard focus everywhere it matters. */
+.btn:focus-visible,
+.icon-btn:focus-visible,
+.names input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .btn-primary { background: var(--accent); color: #fff; box-shadow: 0 8px 24px -10px var(--accent); }
 .btn-ghost {
   background: transparent;
@@ -358,4 +366,16 @@ body {
 
 @media (max-width: 380px) {
   .controls .btn-ghost { padding: 12px 12px; }
+}
+
+/* Respect users who prefer reduced motion: keep the UI, drop the movement. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .dot.current { transform: scale(1.35); }
 }
