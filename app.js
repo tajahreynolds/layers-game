@@ -7,7 +7,7 @@
   "use strict";
 
   const LEVEL_ORDER = ["surface", "subsurface", "core"];
-  const CARDS_TO_UNLOCK = 4; // min cards in a level before "Go deeper" enables
+  const CARDS_TO_UNLOCK = 6; // questions answered per level before "Go deeper" enables (passes don't count)
   const WILDCARD_EVERY = 5; // roughly one wildcard per N draws
   const STORE_KEY = "layers.v1";
 
@@ -139,6 +139,13 @@
     el.screens[name].classList.add("is-active");
   }
 
+  // Pass/Keep only make sense on a real question card, not the opening
+  // "deep breath" interstitial.
+  function setActionsVisible(visible) {
+    el.skipBtn.style.display = visible ? "" : "none";
+    el.saveBtn.style.display = visible ? "" : "none";
+  }
+
   function applyTheme() {
     document.documentElement.setAttribute("data-theme", state.theme);
   }
@@ -182,19 +189,24 @@
     showNextCard();
   }
 
-  function showNextCard() {
+  function showNextCard(counts) {
+    if (counts === undefined) counts = true;
     const lvl = currentLevel();
     if (!state.bags[lvl.id] || state.bags[lvl.id].length === 0) {
       state.bags[lvl.id] = buildBag(lvl.id);
     }
     const text = state.bags[lvl.id].pop();
     state.currentText = text;
-    state.drawnInLevel++;
 
-    // alternate who answers
+    // A passed card doesn't count toward unlocking the next level, and it stays
+    // the same person's turn to answer the replacement.
     el.turnIndicator.textContent = state.names[state.turn] + " answers";
-    state.turn = state.turn === 0 ? 1 : 0;
+    if (counts) {
+      state.drawnInLevel++;
+      state.turn = state.turn === 0 ? 1 : 0;
+    }
 
+    setActionsVisible(true);
     el.cardText.textContent = text;
     el.card.classList.remove("flip");
     void el.card.offsetWidth; // reflow to restart animation
@@ -345,6 +357,7 @@
     el.drawBtn.textContent = "Draw";
     el.saveBtn.setAttribute("aria-pressed", "false");
     el.saveBtn.textContent = "♡ Keep";
+    setActionsVisible(false);
 
     renderLevelMeta();
     updateDeepenBtn();
@@ -360,7 +373,7 @@
 
     el.beginBtn.addEventListener("click", startGame);
     el.drawBtn.addEventListener("click", draw);
-    el.skipBtn.addEventListener("click", showNextCard);
+    el.skipBtn.addEventListener("click", () => showNextCard(false));
     el.saveBtn.addEventListener("click", toggleSave);
     el.deepenBtn.addEventListener("click", deepen);
     el.transitionBtn.addEventListener("click", confirmTransition);
