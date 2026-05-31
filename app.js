@@ -159,8 +159,15 @@
     el.levelName.textContent = state.blended ? "All Layers" : lvl.name;
     el.levelTagline.textContent = state.blended ? "Everything in the mix" : lvl.tagline;
     el.dots.forEach((dot, i) => {
-      dot.classList.toggle("current", i === state.levelIndex);
-      dot.classList.toggle("done", i < state.levelIndex);
+      if (state.blended) {
+        // All layers are in play — light every dot.
+        dot.classList.remove("current", "done");
+        dot.classList.add("blended");
+      } else {
+        dot.classList.remove("blended");
+        dot.classList.toggle("current", i === state.levelIndex);
+        dot.classList.toggle("done", i < state.levelIndex);
+      }
     });
   }
 
