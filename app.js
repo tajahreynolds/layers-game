@@ -21,6 +21,7 @@
     totalDrawn: 0,
     sinceWildcard: 0,
     bags: {}, // levelId -> shuffled queue of card strings
+    wildcardBag: [], // shuffled wildcards, each shown at most once per game
     saved: [],
     currentText: "",
   };
@@ -165,9 +166,11 @@
     state.sinceWildcard++;
     state.totalDrawn++;
 
-    // Inject a wildcard occasionally (never on the very first draw).
+    // Inject a wildcard occasionally (never on the very first draw, and only
+    // while unused wildcards remain — each appears at most once per game).
     if (
       state.totalDrawn > 1 &&
+      state.wildcardBag.length > 0 &&
       state.sinceWildcard >= WILDCARD_EVERY &&
       Math.random() < 0.6
     ) {
@@ -239,7 +242,12 @@
   // ---- wildcard ----
   let timerId = null;
   function showWildcard() {
-    const w = pick(WILDCARDS);
+    // Drawn without replacement; if none are left, just show a normal card.
+    if (state.wildcardBag.length === 0) {
+      showNextCard();
+      return;
+    }
+    const w = state.wildcardBag.pop();
     el.wildcardTitle.textContent = w.title;
     el.wildcardBody.textContent = w.body;
 
@@ -328,6 +336,7 @@
     state.totalDrawn = 0;
     state.sinceWildcard = 0;
     state.bags = {};
+    state.wildcardBag = shuffle(WILDCARDS);
     state.saved = [];
     state.currentText = "";
 
